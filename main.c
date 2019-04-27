@@ -29,20 +29,19 @@ u32 std_crc32(void* buffer,size_t size,u32 prev)
 	for(;i<size;i++)
 	{
 		u8 crc_index=(u8)(crc^buf[i]&0xff);
-		crc=crc_table[crc_index]^(crc>>8);
+		crc=crc32c_table[crc_index]^(crc>>8);
 	}
-	crc^=0xffffffff;
 	return crc;
 }
 
 void main()
 {
-	char string_buf[1000]="Example input";
+	char string_buf[1000]="Example";
 	printf("Type \"exit\" to leave program!\n");
-	printf("Example CRC32 hash of string \"Example input\"\n");
+	printf("Example CRC32 hash of string \"Example\"\n");
 	while(strnicmp(string_buf,"exit",_countof(string_buf)))
 	{
-		size_t len=strnlen_s(string_buf,1000);
+		size_t len=strnlen_s(string_buf,_countof(string_buf));
 		u32 std=std_crc32(string_buf,len,0xffffffff);
 		u32 sse=sse_crc32(string_buf,len,0xffffffff);
 		printf("Result by Non-Optimized: 0x%X\n",std);

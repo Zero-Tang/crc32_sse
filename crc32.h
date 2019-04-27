@@ -27,6 +27,8 @@ typedef signed __int8		i8;
 typedef signed __int16		i16;
 typedef signed __int32		i32;
 typedef signed __int64		i64;
+
+#define stdcall __stdcall
 #endif
 
 // CRC32 hashing Table
@@ -98,4 +100,4 @@ const u32 crc32c_table[256]=
 	0xbe2da0a5, 0x4c4623a6, 0x5f16d052, 0xad7d5351
 };
 
-u32 sse_crc32(void* buffer,size_t size,u32 prev);
+u32 stdcall sse_crc32(void* buffer,size_t size,u32 prev);

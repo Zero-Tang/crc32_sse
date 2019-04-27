@@ -49,5 +49,4 @@ void main()
 		printf("Input string to hash: ");
 		scanf_s("%s",string_buf,_countof(string_buf));
 	}
-	system("pause");
 }

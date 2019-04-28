@@ -16,28 +16,38 @@
   software or the use or other dealings in the software.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "crc32.h"
 
-void main()
+u8 stdcall check_sse42()
 {
-	char string_buf[1000]="Example";
-	if(check_sse42())
-		printf("Your computer supports SSE4.2!\n");
-	else
-		exit(1);
-	printf("Type \"exit\" to leave program!\n");
-	printf("Example CRC32 hash of string \"Example\"\n");
-	while(strncmp(string_buf,"exit",_countof(string_buf)))
+#if defined(_msvc) || defined(_icl)
+	u32 info[4];
+	__cpuid(info,1);
+	return _bittest(&info[2],20);
+#endif
+}
+
+#if defined(_icl)
+u32 stdcall sse_crc32(void* buffer,size_t size,u32 prev)
+{
+	u8* buf=(u8*)buffer;
+	u32 crc=prev;
+	u32 i=0;
+	for(;i<size;i++)
+		crc=_mm_crc32_u8(crc,buf[i]);
+	return crc;
+}
+#endif
+
+u32 stdcall std_crc32(void* buffer,size_t size,u32 prev)
+{
+	u8* buf=(u8*)buffer;
+	u32 crc=prev;
+	u32 i=0;
+	for(;i<size;i++)
 	{
-		size_t len=strnlen_s(string_buf,_countof(string_buf));
-		u32 std=std_crc32(string_buf,len,0xffffffff);
-		u32 sse=sse_crc32(string_buf,len,0xffffffff);
-		printf("Result by Non-Optimized: 0x%X\n",std);
-		printf("Result by SSE-Optimized: 0x%X\n",sse);
-		printf("Input string to hash: ");
-		scanf_s("%s",string_buf,_countof(string_buf));
+		u8 crc_index=(u8)(crc^buf[i]&0xff);
+		crc=crc32c_table[crc_index]^(crc>>8);
 	}
+	return crc;
 }

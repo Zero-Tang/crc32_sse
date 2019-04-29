@@ -20,15 +20,17 @@
 
 sse_crc32 proc buffer:dword,len:dword,prev:dword
 
-	mov eax,dword ptr[prev]
-	mov ecx,dword ptr[buffer]
-	mov edx,dword ptr[len]
+	push esi
+	mov edx,dword ptr[prev]
+	mov esi,dword ptr[buffer]
+	mov ecx,dword ptr[len]
+	cld
 loop_crc:
-	crc32 eax,byte ptr[ecx]
-	inc ecx
-	dec edx
-	test edx,edx
-	jnz loop_crc
+	lodsb
+	crc32 edx,al
+	loop loop_crc
+	pop esi
+	mov eax,edx
 	ret
 
 sse_crc32 endp

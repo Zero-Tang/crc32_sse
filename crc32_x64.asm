@@ -18,13 +18,15 @@
 
 sse_crc32 proc
 
-	mov rax,r8
+	xchg rcx,rdx
+	xchg rdx,rsi
+	cld
 loop_crc:
-	crc32 rax,byte ptr[rcx]
-	inc rcx
-	dec rdx
-	test rdx,rdx
-	jnz loop_crc
+	lodsb
+	crc32 r8d,al
+	loop loop_crc
+	mov rsi,rdx
+	mov eax,r8d
 	ret
 
 sse_crc32 endp

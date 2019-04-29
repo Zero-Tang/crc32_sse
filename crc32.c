@@ -16,6 +16,7 @@
   software or the use or other dealings in the software.
 */
 
+#include <stdlib.h>
 #include "crc32.h"
 
 u8 stdcall check_sse42()
